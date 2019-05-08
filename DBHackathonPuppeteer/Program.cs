@@ -3,7 +3,6 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using PuppeteerSharp;
-using log4net;
 
 namespace PuppeteerSharpPdfDemo
 {
@@ -15,7 +14,8 @@ namespace PuppeteerSharpPdfDemo
             {
                 Headless = true
             };
-
+            Console.WriteLine("Downloading chromium");
+            await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultRevision);
             MyLogger.SetConfiguration();
             MyLogger.Info("Navigating to puppeteersharp");
             using (var browser = await Puppeteer.LaunchAsync(options))
