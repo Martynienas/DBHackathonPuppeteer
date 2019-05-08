@@ -22,7 +22,7 @@ namespace PuppeteerSharpPdfDemo
             using (var page = await browser.NewPageAsync())
             {
                 await page.GoToAsync("https://www.puppeteersharp.com/examples/index.html");
-                MyLogger.Info("Generating PDF");
+                MyLogger.Info("Generating PDF!");
                 await page.PdfAsync(Path.Combine(Directory.GetCurrentDirectory(), "puppeteersharp.pdf"));
                 MyLogger.Info("Export completed");
                 await page.GoToAsync("https://www.aymen-loukil.com/en/blog-en/google-puppeteer-tutorial-with-examples/");
