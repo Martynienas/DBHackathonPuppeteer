@@ -17,7 +17,7 @@ namespace PuppeteerSharpPdfDemo
             };
 
             MyLogger.SetConfiguration();
-            MyLogger.Info("Navigating google");
+            MyLogger.Info("Navigating to puppeteersharp");
             using (var browser = await Puppeteer.LaunchAsync(options))
             using (var page = await browser.NewPageAsync())
             {
