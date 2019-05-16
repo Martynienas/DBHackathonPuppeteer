@@ -109,6 +109,13 @@ namespace DBHackathonPuppeteer
             //TODO asser right line
         }
 
+        [Test]
+        public async Task Loose()
+        {
+            await solver.FailGame(page);
+            await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
+            Assert.Pass();
+        }
 
         [Test]
         public async Task VerifyGameContainerDisplayed()
