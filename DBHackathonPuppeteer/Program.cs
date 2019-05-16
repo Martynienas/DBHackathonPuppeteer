@@ -12,7 +12,7 @@ namespace PuppeteerSharpPdfDemo
 		{
 			var options = new LaunchOptions
 			{
-				 Headless = true
+				 Headless = false
 			};
 			Logger.SetConfiguration();
 			Logger.Info("Downloading chromium");
@@ -21,15 +21,7 @@ namespace PuppeteerSharpPdfDemo
 			using (var page = await browser.NewPageAsync())
 			{
 				Logger.Info("Navigating to puppeteersharp");
-				await page.GoToAsync("https://www.puppeteersharp.com/examples/index.html");
-				Logger.Info("Generating PDF!");
-				await page.PdfAsync(Path.Combine(Directory.GetCurrentDirectory(), "puppeteersharp.pdf"));
-				Logger.Info("Export completed");
-				Logger.Info("Navigating to aymen-loukil");
-				await page.GoToAsync("https://www.aymen-loukil.com/en/blog-en/google-puppeteer-tutorial-with-examples/");
-				Logger.Info("Generating PDF");
-				await page.PdfAsync(Path.Combine(Directory.GetCurrentDirectory(), "puppeteer-tutorial.pdf"));
-				Logger.Info("Export completed");
+				await page.GoToAsync("https://4ark.me/2048/");
 				if (!args.Any(arg => arg == "auto-exit"))
 				{
 					Console.ReadLine();
