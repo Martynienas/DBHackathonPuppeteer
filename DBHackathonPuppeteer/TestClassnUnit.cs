@@ -29,12 +29,13 @@ namespace DBHackathonPuppeteer
             InitializePage().Wait();
             defaultWaitForSelectorOptions.Timeout = waitForSelectorTimeOut;
             solver = new GameSolverHelper();
+            page.GoToAsync(testPageUrl).Wait();
         }
 
         [SetUp]
         public void SetUp()
         {
-            //TODO: Clear storage
+            ClearLocalStorage().Wait();
             page.GoToAsync(testPageUrl).Wait();
         }
 
@@ -53,8 +54,8 @@ namespace DBHackathonPuppeteer
             Assert.AreEqual("New Game", await GetText(".restart-btn"));
             Assert.AreEqual("Join the numbers and get to the 2048 tile!", await GetText(".above-game"));
             Assert.AreEqual("Crafted with by @4Ark/GitHub", await GetText(".footer"));
-            //Assert.AreEqual(":( FIALURE", await GetText(".failure-container pop-container"));
-            //Assert.AreEqual(":) WINNING", await GetText(".winning-container pop-container"));
+            Assert.AreEqual(":(\n\nFIALURE", await GetText(".failure-container.pop-container"));
+            Assert.AreEqual(":)\n\nWINNING", await GetText(".winning-container.pop-container"));
         }
 
         [Test]
@@ -122,7 +123,7 @@ namespace DBHackathonPuppeteer
             await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
             Assert.Pass();
         }
-        [Test, Retry(1000)]
+        [Test]
         public async Task Win()
         {
             await solver.Jiggle(page);
@@ -195,8 +196,6 @@ namespace DBHackathonPuppeteer
         [Test]
         public async Task VerifyScoring()
         {
-            await ClearLocalStorage();
-            await page.ReloadAsync();
             Score initialScore = await GetScore();
                      
             await solver.JiggleUntilFail(page);
