@@ -14,11 +14,11 @@ namespace DBHackathonPuppeteer
             this.page = page;
         }
 
-        public async Task TakeScreenshot(string fileNamePrefix = null, string outputFile = null)
+        public async Task TakeScreenshot(string folderName = "screenshots", string fileNamePrefix = null, string outputFile = null)
         {
             if (outputFile == null)
             {
-                outputFile = $"{Directory.GetCurrentDirectory()}/screenshots/{fileNamePrefix}_{DateTime.Now.ToString("yyyyMMdd_HHmmssffff")}.png";
+                outputFile = $"{Directory.GetCurrentDirectory()}/{folderName}/{fileNamePrefix}_{DateTime.Now.ToString("yyyyMMdd_HHmmssffff")}.png";
             }
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
 

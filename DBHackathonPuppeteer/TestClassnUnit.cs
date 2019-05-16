@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using PuppeteerSharp.Input;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System;
 
 namespace DBHackathonPuppeteer
 {
@@ -16,6 +18,7 @@ namespace DBHackathonPuppeteer
         private const int waitForSelectorTimeOut = 5000;
         private WaitForSelectorOptions defaultWaitForSelectorOptions = new WaitForSelectorOptions();
         private ScreenshotHelper screenshotHelper;
+        private string runId;
 
         public class Score
         {
@@ -26,12 +29,13 @@ namespace DBHackathonPuppeteer
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            runId = $"TestRun_{DateTime.Now.ToString("yyyyMMdd_HHmmss_ffff")}";
             InitializePage().Wait();
             defaultWaitForSelectorOptions.Timeout = waitForSelectorTimeOut;
             solver = new GameSolverHelper();
             screenshotHelper = new ScreenshotHelper(page);
             page.GoToAsync(testPageUrl).Wait();
-            screenshotHelper.TakeScreenshot().Wait();
+            screenshotHelper.TakeScreenshot(runId, "OneTimeSetUp").Wait();
         }
 
         [SetUp]
@@ -41,10 +45,16 @@ namespace DBHackathonPuppeteer
             page.GoToAsync(testPageUrl).Wait();
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            screenshotHelper.TakeScreenshot(runId, "TearDown").Wait();
+        }
+
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            screenshotHelper.TakeScreenshot().Wait();
+            screenshotHelper.TakeScreenshot(runId, "OneTimeTearDown").Wait();
             page.Dispose();
         }
 
@@ -200,13 +210,13 @@ namespace DBHackathonPuppeteer
         public async Task VerifyScoring()
         {
             Score initialScore = await GetScore();
-                     
+
             await solver.JiggleUntilFail(page);
             Score scoreAfterGame = await GetScore();
 
             await ClickNewGame();
             Score scoreAfterNewGame = await GetScore();
-           
+
             Assert.Multiple(() =>
             {
                 Assert.AreEqual("0", initialScore.CurrentScore, "Initial current score mismatch");
@@ -243,12 +253,12 @@ namespace DBHackathonPuppeteer
                 Assert.True(newGrid.Contains(4), "Tile #4 were not displayed");
             });
         }
-        
+
         private bool IsInteger(string score)
         {
             return int.TryParse(score, out int result);
         }
-        
+
         private async Task InitializePage()
         {
             string[] browserArgs = { "--start-maximized" };
