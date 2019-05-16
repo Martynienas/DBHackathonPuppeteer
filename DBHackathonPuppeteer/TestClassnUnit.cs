@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using PuppeteerSharp;
-using System;
 using System.Threading.Tasks;
 
 namespace DBHackathonPuppeteer
@@ -26,10 +25,12 @@ namespace DBHackathonPuppeteer
         }
 
         [Test]
-        public async Task AssertNavigationToUrl()
+        public async Task VerifyUIStrings()
         {
-            await page.GoToAsync(testPageUrl);
-            Assert.AreEqual(testPageUrl, page.Url);
+            var titleSelector = "h1.title";
+            ElementHandle title = await page.WaitForSelectorAsync(titleSelector);
+            string titlestringstring = await GetText(title);
+            Assert.AreEqual("2048", titlestringstring);
         }
 
         private async Task InitializePage()
@@ -52,6 +53,19 @@ namespace DBHackathonPuppeteer
             var browser = await Puppeteer.LaunchAsync(options);
             page = await browser.NewPageAsync();
             await page.SetViewportAsync(viewPortOptions);
+            await page.GoToAsync(testPageUrl);
+        }
+
+        private async Task<string> GetText(ElementHandle element)
+        {
+            return await GetProperty(element, "innerText");
+        }
+
+        private async Task<string> GetProperty(ElementHandle element, string property)
+        {
+            JSHandle jsHandle = await element.GetPropertyAsync(property);
+            string value = await jsHandle.JsonValueAsync<string>();
+            return value;
         }
     }
 }
