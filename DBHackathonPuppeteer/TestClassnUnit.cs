@@ -19,11 +19,17 @@ namespace DBHackathonPuppeteer
             InitializePage().Wait();
         }
 
+        [SetUp]
+        public void SetUp()
+        {
+            //TODO: Clear storage
+            page.GoToAsync(testPageUrl).Wait();
+        }
+
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
             page.Dispose();
-            browser.Dispose();
         }
 
         [Test]
@@ -54,6 +60,21 @@ namespace DBHackathonPuppeteer
         }
         
 
+        [Test]
+        public async Task VerifyLayout()
+        {
+
+        }
+
+        [Test]
+        public async Task VerifyUiActions()
+        {
+            string newGameButtonSelector = ".restart-btn";
+
+            ElementHandle buttonElement = await page.WaitForSelectorAsync(newGameButtonSelector);
+            await buttonElement.ClickAsync();
+        }
+
         private async Task InitializePage()
         {
             string[] browserArgs = { "--start-maximized" };
@@ -74,7 +95,6 @@ namespace DBHackathonPuppeteer
             var browser = await Puppeteer.LaunchAsync(options);
             page = await browser.NewPageAsync();
             await page.SetViewportAsync(viewPortOptions);
-            await page.GoToAsync(testPageUrl);
         }
 
         private async Task<string> GetText(string selector)
