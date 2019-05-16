@@ -27,10 +27,14 @@ namespace DBHackathonPuppeteer
         [Test]
         public async Task VerifyUIStrings()
         {
-            var titleSelector = "h1.title";
-            ElementHandle title = await page.WaitForSelectorAsync(titleSelector);
-            string titlestringstring = await GetText(title);
-            Assert.AreEqual("2048", titlestringstring);
+            Assert.AreEqual("2048", await GetText("h1.title"));
+            Assert.AreEqual("SCORE", await GetText(".score-container > .title"));
+            Assert.AreEqual("BEST", await GetText(".best-container > .title"));
+            Assert.AreEqual("New Game", await GetText(".restart-btn"));
+            Assert.AreEqual("Join the numbers and get to the 2048 tile!", await GetText(".above-game"));
+            Assert.AreEqual("Crafted with by @4Ark/GitHub", await GetText(".footer"));
+            //Assert.AreEqual(":( FIALURE", await GetText(".failure-container pop-container"));
+            //Assert.AreEqual(":) WINNING", await GetText(".winning-container pop-container"));
         }
 
         private async Task InitializePage()
@@ -54,6 +58,12 @@ namespace DBHackathonPuppeteer
             page = await browser.NewPageAsync();
             await page.SetViewportAsync(viewPortOptions);
             await page.GoToAsync(testPageUrl);
+        }
+
+        private async Task<string> GetText(string selector)
+        {
+            ElementHandle element = await page.WaitForSelectorAsync(selector);
+            return await GetText(element);
         }
 
         private async Task<string> GetText(ElementHandle element)
