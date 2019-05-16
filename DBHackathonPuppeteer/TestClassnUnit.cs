@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using PuppeteerSharp;
 using System.Collections.Generic;
+using PuppeteerSharp.Input;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,6 +48,21 @@ namespace DBHackathonPuppeteer
             //Assert.AreEqual(":( FIALURE", await GetText(".failure-container pop-container"));
             //Assert.AreEqual(":) WINNING", await GetText(".winning-container pop-container"));
         }
+
+        [Test]
+        public async Task ArrowDown()
+        {
+            var gameSolver = new GameSolverHelper();
+            int[] initialGrid = await gameSolver.GetGridElements(page);
+            int initialSum = initialGrid.Sum();
+            await page.Keyboard.PressAsync(Key.ArrowDown);
+            int[] newGrid = await gameSolver.GetGridElements(page);
+            int newSum = newGrid.Sum();
+
+            Assert.AreEqual(initialSum + 2, newSum);
+            Assert.GreaterOrEqual(newGrid.TakeLast(4).Sum(), initialSum);
+        }
+        
 
         [Test]
         public async Task VerifyLayout()
