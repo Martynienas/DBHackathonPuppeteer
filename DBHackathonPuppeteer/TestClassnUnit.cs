@@ -17,11 +17,17 @@ namespace DBHackathonPuppeteer
             InitializePage().Wait();
         }
 
+        [SetUp]
+        public void SetUp()
+        {
+            //TODO: Clear storage
+            page.GoToAsync(testPageUrl).Wait();
+        }
+
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
             page.Dispose();
-            browser.Dispose();
         }
 
         [Test]
@@ -35,6 +41,21 @@ namespace DBHackathonPuppeteer
             Assert.AreEqual("Crafted with by @4Ark/GitHub", await GetText(".footer"));
             //Assert.AreEqual(":( FIALURE", await GetText(".failure-container pop-container"));
             //Assert.AreEqual(":) WINNING", await GetText(".winning-container pop-container"));
+        }
+
+        [Test]
+        public async Task VerifyLayout()
+        {
+
+        }
+
+        [Test]
+        public async Task VerifyUiActions()
+        {
+            string newGameButtonSelector = ".restart-btn";
+
+            ElementHandle buttonElement = await page.WaitForSelectorAsync(newGameButtonSelector);
+            await buttonElement.ClickAsync();
         }
 
         private async Task InitializePage()
@@ -57,7 +78,6 @@ namespace DBHackathonPuppeteer
             var browser = await Puppeteer.LaunchAsync(options);
             page = await browser.NewPageAsync();
             await page.SetViewportAsync(viewPortOptions);
-            await page.GoToAsync(testPageUrl);
         }
 
         private async Task<string> GetText(string selector)
