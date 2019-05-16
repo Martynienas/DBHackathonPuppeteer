@@ -10,7 +10,6 @@ namespace DBHackathonPuppeteer
     [TestFixture]
     class TestClassnUnit
     {
-        private Browser browser;
         private Page page;
         private GameSolverHelper solver = new GameSolverHelper();
         private const string testPageUrl = "http://4ark.me/2048/";
@@ -189,16 +188,47 @@ namespace DBHackathonPuppeteer
 
             await ClickNewGame();
             Score scoreAfterNewGame = await GetScore();
-
+           
             Assert.Multiple(() =>
             {
                 Assert.AreEqual("0", initialScore.CurrentScore, "Initial current score mismatch");
                 Assert.AreEqual("0", initialScore.BestScore, "Initial best score mismatch");
+                Assert.True(IsInteger(initialScore.CurrentScore), "Initial current is not integer");
+                Assert.True(IsInteger(initialScore.BestScore), "Initial best score is not integer");
                 Assert.AreNotEqual("0", scoreAfterGame.CurrentScore, "Current score after game mismatch");
                 Assert.AreNotEqual("0", scoreAfterGame.BestScore, "Best score after game mismatch");
+                Assert.True(IsInteger(scoreAfterGame.CurrentScore), "Current score after game is not integer");
+                Assert.True(IsInteger(scoreAfterGame.BestScore), "Best score after game is not integer");
                 Assert.AreEqual("0", scoreAfterNewGame.CurrentScore, "Current score for new game mismatch");
                 Assert.AreEqual(scoreAfterGame.BestScore, scoreAfterNewGame.BestScore, "Best score for new game mismatch");
+                Assert.True(IsInteger(scoreAfterGame.CurrentScore), "Current score for new game is not integer");
+                Assert.True(IsInteger(scoreAfterGame.BestScore), "Best score for new game is not integer");
             });
+        }
+
+        [Test]
+        public async Task VerifyScoreCalculation()
+        {
+            int[] initialGrid = await solver.GetGridElements(page);
+            int initialSum = initialGrid.Sum();
+            await page.Keyboard.PressAsync(Key.ArrowDown);
+            await page.Keyboard.PressAsync(Key.ArrowRight);
+            int[] newGrid = await solver.GetGridElements(page);
+            int newSum = newGrid.Sum();
+
+            Score score = await GetScore();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("4", score.CurrentScore, "Initial current score mismatch");
+                Assert.AreEqual("4", score.BestScore, "Initial best score mismatch");
+                Assert.True(newGrid.Contains(4), "Tile #4 were not displayed");
+            });
+        }
+        
+        private bool IsInteger(string score)
+        {
+            return int.TryParse(score, out int result);
         }
         
         private async Task InitializePage()
