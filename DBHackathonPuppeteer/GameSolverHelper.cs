@@ -60,6 +60,10 @@ namespace DBHackathonPuppeteer
                                         if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
                     {
                         await page.Keyboard.PressAsync("ArrowLeft");
+                        if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                        {
+                            break;
+                        }
                     }
                 }
             }

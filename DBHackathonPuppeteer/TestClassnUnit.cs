@@ -117,6 +117,21 @@ namespace DBHackathonPuppeteer
             Assert.Pass();
         }
 
+        [Test, Retry(1000)]
+        public async Task Win()
+        {
+            await solver.Jiggle(page);
+            try
+            {
+                await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
+                Assert.Fail();
+            }
+            catch
+            {
+                Assert.Pass();
+            }
+        }
+
         [Test]
         public async Task VerifyGameContainerDisplayed()
         {
