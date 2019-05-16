@@ -161,11 +161,49 @@ namespace DBHackathonPuppeteer
                         await page.Keyboard.PressAsync("ArrowUp");
                         continue;
                     }
+                    // ----------------- third world ----------------------
+                    if (tempGrid[1] == tempGrid[1])
+                    {
+                        await page.Keyboard.PressAsync("ArrowRight");
+                        //continue;
+                    }
+                    if (tempGrid[6] == tempGrid[1])
+                    {
+                        await page.Keyboard.PressAsync("ArrowUp");
+                        //continue;
+                    }
+                    if (tempGrid[6] == tempGrid[6])
+                    {
+                        await page.Keyboard.PressAsync("ArrowRight");
+                        //continue;
+                    }
+                    if (tempGrid[11] == tempGrid[6])
+                    {
+                        await page.Keyboard.PressAsync("ArrowUp");
+                        //continue;
+                    }
+                    if (tempGrid[6] == tempGrid[11])
+                    {
+                        await page.Keyboard.PressAsync("ArrowRight");
+                        //continue;
+                    }
+                    if (tempGrid[11] == tempGrid[11])
+                    {
+                        await page.Keyboard.PressAsync("ArrowUp");
+                        //continue;
+                    }
                 }
 
                 {
+                    int[] tempGrid3 = await GetGridElements(page);
                     await page.Keyboard.PressAsync("ArrowRight");
                     await page.Keyboard.PressAsync("ArrowUp");
+                    int[] tempGrid4 = await GetGridElements(page);
+                    if (Enumerable.SequenceEqual(tempGrid3, tempGrid4))
+                    {
+                        await page.Keyboard.PressAsync("ArrowDown");
+                        //await page.Keyboard.PressAsync("ArrowUp");
+                    }
                 }
                 int[] tempGrid2 = await GetGridElements(page);
                 bool isEqual = Enumerable.SequenceEqual(tempGrid, tempGrid2);
@@ -181,10 +219,10 @@ namespace DBHackathonPuppeteer
                         if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
                         {
                             await page.Keyboard.PressAsync("ArrowLeft");
-                            if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
-                            {
-                                failedActions++;
-                            }
+                            //if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                            //{
+                            //    failedActions++;
+                            //}
                         }
                     }
                 }
