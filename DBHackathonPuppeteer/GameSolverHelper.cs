@@ -128,81 +128,92 @@ namespace DBHackathonPuppeteer
                     await page.Keyboard.PressAsync("ArrowUp");
                     await page.Keyboard.PressAsync("ArrowRight");
                 }
-                if (tempGrid[2] == tempGrid[3])
+                int[] tempGrid6 = await GetGridElements(page);
+                if (tempGrid6[2] == tempGrid6[3])
                 {
                     await page.Keyboard.PressAsync("ArrowRight");
-                    //continue;
+                    continue;
                 }
-                if (tempGrid[7] == tempGrid[3])
+                if (tempGrid6[7] == tempGrid6[3])
                 {
                     await page.Keyboard.PressAsync("ArrowUp");
                     continue;
                 }
 
-                if ((tempGrid[2] != tempGrid[3]) && (tempGrid[7] != tempGrid[3]))
+                if ((tempGrid6[2] != tempGrid6[3]) && (tempGrid6[7] != tempGrid6[3]))
                 {
-                    if (tempGrid[1] == tempGrid[2])
+                    if (tempGrid6[1] == tempGrid6[2] && tempGrid6[2]!=0)
                     {
                         await page.Keyboard.PressAsync("ArrowRight");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[6] == tempGrid[2])
+                    if (tempGrid6[6] == tempGrid6[2] && tempGrid6[2] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowUp");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[6] == tempGrid[7])
+                    if (tempGrid6[6] == tempGrid6[7] && tempGrid6[7] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowRight");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[11] == tempGrid[7])
+                    if (tempGrid6[11] == tempGrid6[7] && tempGrid6[7] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowUp");
                         continue;
                     }
                     // ----------------- third world ----------------------
-                    if (tempGrid[1] == tempGrid[1])
+                    if (tempGrid6[0] == tempGrid6[1] && tempGrid6[1] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowRight");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[6] == tempGrid[1])
+                    if (tempGrid6[5] == tempGrid6[1] && tempGrid6[1] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowUp");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[6] == tempGrid[6])
+                    if (tempGrid6[5] == tempGrid6[6] && tempGrid6[6] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowRight");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[11] == tempGrid[6])
+                    if (tempGrid6[10] == tempGrid6[6] && tempGrid6[6] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowUp");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[6] == tempGrid[11])
+                    if (tempGrid6[10] == tempGrid6[11] && tempGrid6[11] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowRight");
-                        //continue;
+                        continue;
                     }
-                    if (tempGrid[11] == tempGrid[11])
+                    if (tempGrid6[15] == tempGrid6[11] && tempGrid6[11] != 0)
                     {
                         await page.Keyboard.PressAsync("ArrowUp");
-                        //continue;
+                        continue;
                     }
+                    await page.Keyboard.PressAsync("ArrowRight");
+                    await page.Keyboard.PressAsync("ArrowUp");
                 }
 
                 {
                     int[] tempGrid3 = await GetGridElements(page);
-                    await page.Keyboard.PressAsync("ArrowRight");
-                    await page.Keyboard.PressAsync("ArrowUp");
+                    //await page.Keyboard.PressAsync("ArrowRight");
+                    //await page.Keyboard.PressAsync("ArrowUp");
                     int[] tempGrid4 = await GetGridElements(page);
                     if (Enumerable.SequenceEqual(tempGrid3, tempGrid4))
                     {
+
+                        await page.Keyboard.PressAsync("ArrowLeft");
+                        
+                        await page.Keyboard.PressAsync("ArrowRight");
+                    }
+                    int[] tempGrid5 = await GetGridElements(page);
+                    if (Enumerable.SequenceEqual(tempGrid3, tempGrid5))
+                    {
                         await page.Keyboard.PressAsync("ArrowDown");
-                        //await page.Keyboard.PressAsync("ArrowUp");
+                        await page.Keyboard.PressAsync("ArrowUp");
                     }
                 }
                 int[] tempGrid2 = await GetGridElements(page);
