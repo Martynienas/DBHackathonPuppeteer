@@ -213,7 +213,7 @@ namespace DBHackathonPuppeteer
                     if (Enumerable.SequenceEqual(tempGrid3, tempGrid5))
                     {
                         await page.Keyboard.PressAsync("ArrowDown");
-                        await page.Keyboard.PressAsync("ArrowUp");
+                        //await page.Keyboard.PressAsync("ArrowUp");
                     }
                 }
                 int[] tempGrid2 = await GetGridElements(page);
@@ -230,10 +230,10 @@ namespace DBHackathonPuppeteer
                         if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
                         {
                             await page.Keyboard.PressAsync("ArrowLeft");
-                            //if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
-                            //{
-                            //    failedActions++;
-                            //}
+                            if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                            {
+                                failedActions++;
+                            }
                         }
                     }
                 }

@@ -14,7 +14,7 @@ namespace DBHackathonPuppeteer
     {
         private Page page;
         private GameSolverHelper solver = new GameSolverHelper();
-        private const string testPageUrl = "http://4ark.me/2048/";
+        private const string testPageUrl = "https://broken-2048.herokuapp.com";
         private const int waitForSelectorTimeOut = 5000;
         private WaitForSelectorOptions defaultWaitForSelectorOptions = new WaitForSelectorOptions();
         private ScreenshotHelper screenshotHelper;
@@ -134,19 +134,22 @@ namespace DBHackathonPuppeteer
             await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
             Assert.Pass();
         }
-        [Test]
+
+        [Test, Retry(50)]
         public async Task Win()
         {
-            await solver.Jiggle(page);
+            await solver.Jigglev2(page);
+            bool won = false;
             try
             {
                 await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
-                Assert.Fail();
+                won = false;
             }
             catch
             {
-                Assert.Pass();
+                won = true;
             }
+            Assert.True(won);
         }
 
         [Test]
@@ -250,6 +253,77 @@ namespace DBHackathonPuppeteer
                 Assert.AreEqual("4", score.BestScore, "Initial best score mismatch");
                 Assert.True(newGrid.Contains(4), "Tile #4 were not displayed");
             });
+        }
+
+        [Test]
+        public async Task VerifyAdvancedScoreCalculation()
+        {
+            int moveCount = 1000;
+            int error = 0;
+
+            for (int i = 0; i < moveCount; i++)
+            {
+                int[] initialGrid = await solver.GetGridElements(page);
+                int initialTileCount = GetTileCount(initialGrid);
+                Score initialScore = await GetScore();
+                await MakeRandomMove();
+                int[] gridAfterMove = await solver.GetGridElements(page);
+                int tileCountAfterMove = GetTileCount(gridAfterMove);
+                Score scoreAfterMove = await GetScore();
+
+                if ((tileCountAfterMove == initialTileCount) && (initialScore.CurrentScore == scoreAfterMove.CurrentScore))
+                {
+                    error++;
+
+                    if(error <= 100)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
+                    }
+                    catch (Exception)
+                    {
+                        Assert.Fail("Score calculation error");
+                    }
+                }
+            }
+        }
+
+        private async Task MakeRandomMove()
+        {
+            Random rnd = new Random();
+            int random = rnd.Next(1, 5);
+
+            switch (random)
+            {
+                case 1:
+                    await page.Keyboard.PressAsync(Key.ArrowDown);
+                    break;
+                case 2:
+                    await page.Keyboard.PressAsync(Key.ArrowUp);
+                    break;
+                case 3:
+                    await page.Keyboard.PressAsync(Key.ArrowLeft);
+                    break;
+                case 4:
+                    await page.Keyboard.PressAsync(Key.ArrowRight);
+                    break;
+            }
+        }
+        
+        private int GetTileCount(int[] grid)
+        {
+            int tileCount = 0;
+
+            foreach(int i in grid)
+            {
+                if (i == 0) tileCount++;
+            }
+
+            return tileCount;
         }
 
         private bool IsInteger(string score)
