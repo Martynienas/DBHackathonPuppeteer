@@ -12,7 +12,7 @@ namespace PuppeteerSharpPdfDemo
 		{
 			var options = new LaunchOptions
 			{
-				 Headless = true
+				 Headless = false
 			};
 			Logger.SetConfiguration();
 			Logger.Info("Downloading chromium");
