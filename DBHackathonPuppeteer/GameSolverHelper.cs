@@ -64,5 +64,34 @@ namespace DBHackathonPuppeteer
             }
         }
 
+        public async Task JiggleUntilFail(Page page)
+        {
+            int failedActions = 0;
+            for (int i = 1; i < 10000; i++)
+            {
+                int[] tempGrid = await GetGridElements(page);
+                await page.Keyboard.PressAsync("ArrowUp");
+                await page.Keyboard.PressAsync("ArrowRight");
+                int[] tempGrid2 = await GetGridElements(page);
+                bool isEqual = Enumerable.SequenceEqual(tempGrid, tempGrid2);
+                if (isEqual)
+                {
+                    if(failedActions >= 3)
+                    {
+                        break;
+                    }
+
+                    await page.Keyboard.PressAsync("ArrowDown");
+                    if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                    {
+                        await page.Keyboard.PressAsync("ArrowLeft");
+                        if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                        {
+                            failedActions++;                            
+                        }
+                    }
+                }
+            }
+        }
     }
 }

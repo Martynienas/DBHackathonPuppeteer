@@ -17,6 +17,12 @@ namespace DBHackathonPuppeteer
         private const int waitForSelectorTimeOut = 5000;
         private WaitForSelectorOptions defaultWaitForSelectorOptions = new WaitForSelectorOptions();
 
+        public class Score
+        {
+            public string CurrentScore { get; set; }
+            public string BestScore { get; set; }
+        }
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -109,14 +115,6 @@ namespace DBHackathonPuppeteer
             //TODO asser right line
         }
 
-
-        [Test]
-        public async Task VerifyGameContainerDisplayed()
-        {
-            string gameContainerSelector = "div.game-container";
-            Assert.DoesNotThrowAsync(() => page.WaitForSelectorAsync(gameContainerSelector, defaultWaitForSelectorOptions), "Game container does not exist");
-        }
-
         [Test]
         public async Task VerifyInitialTilesDisplayed()
         {
@@ -140,7 +138,6 @@ namespace DBHackathonPuppeteer
                 Assert.AreEqual(initialTilesCount, results.Length, "Tile count mismatch");
                 Assert.AreEqual(expectedTileSum, actualTileSum, "Expected tile value sum mismatch");
             });
-
         }
 
         [Test]
@@ -155,15 +152,48 @@ namespace DBHackathonPuppeteer
             {
                 int[] gridElements = await ClickNewGameAndGetGrid();
                 gridElementList.Add(gridElements);
-                if (gridElements == initialGridElements)
+                if (gridElements.SequenceEqual(initialGridElements))
                 {
                     matchCount++;
                 }
             }
 
+            //TODO: Group and check different group count
             Assert.AreNotEqual(refreshCount, matchCount, "Grid was not reloaded");
         }
 
+        [TestCase("div.game-container")]
+        [TestCase("div.score-container")]
+        [TestCase("div.best-container")]
+        public async Task VerifyPageElements(string selector)
+        {
+            Assert.DoesNotThrowAsync(() => page.WaitForSelectorAsync(selector, defaultWaitForSelectorOptions), $"{selector} element does not exist");
+        }
+
+        [Test]
+        public async Task VerifyScoring()
+        {
+            await ClearLocalStorage();
+            await page.ReloadAsync();
+            Score initialScore = await GetScore();
+                     
+            await solver.JiggleUntilFail(page);
+            Score scoreAfterGame = await GetScore();
+
+            await ClickNewGame();
+            Score scoreAfterNewGame = await GetScore();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("0", initialScore.CurrentScore, "Initial current score mismatch");
+                Assert.AreEqual("0", initialScore.BestScore, "Initial best score mismatch");
+                Assert.AreNotEqual("0", scoreAfterGame.CurrentScore, "Current score after game mismatch");
+                Assert.AreNotEqual("0", scoreAfterGame.BestScore, "Best score after game mismatch");
+                Assert.AreEqual("0", scoreAfterNewGame.CurrentScore, "Current score for new game mismatch");
+                Assert.AreEqual(scoreAfterGame.BestScore, scoreAfterNewGame.BestScore, "Best score for new game mismatch");
+            });
+        }
+        
         private async Task InitializePage()
         {
             string[] browserArgs = { "--start-maximized" };
@@ -206,11 +236,36 @@ namespace DBHackathonPuppeteer
 
         private async Task<int[]> ClickNewGameAndGetGrid()
         {
+            await ClickNewGame();
+            int[] gridElements = await solver.GetGridElements(page);
+            return gridElements;
+        }
+
+        private async Task ClickNewGame()
+        {
             string newGameButtonSelector = ".restart-btn";
             ElementHandle buttonElement = await page.WaitForSelectorAsync(newGameButtonSelector);
             await buttonElement.ClickAsync();
-            int[] gridElements = await solver.GetGridElements(page);
-            return gridElements;
+        }
+
+        private async Task ClearLocalStorage()
+        {
+            string clearStorage = "javascript:localStorage.clear();";
+            await page.EvaluateExpressionAsync(clearStorage);
+        }
+
+        private async Task<Score> GetScore()
+        {
+            string currentScore = await GetText("div.score-container > p.score");
+            string bestScore = await GetText("div.best-container > p.score");
+
+            Score score = new Score
+            {
+                CurrentScore = currentScore,
+                BestScore = bestScore
+            };
+
+            return score;
         }
     }
 }
