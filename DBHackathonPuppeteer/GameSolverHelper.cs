@@ -8,13 +8,16 @@ namespace DBHackathonPuppeteer
 {
     class GameSolverHelper
     {
-        public static int[] gridTiles = 
-           {
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0
-           };
+        public static int[] emptyGrid()
+        {
+            return new int[]
+            {
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                0, 0, 0, 0
+            };
+        }
 
         public class Tile
         {
@@ -22,8 +25,9 @@ namespace DBHackathonPuppeteer
             public int Value { get; set; }
         }
 
-        public async  void GetGridElements(Page page)
+        public async Task<int[]> GetGridElements(Page page)
         {
+            int[] gridTiles = emptyGrid();
             var jsCode = @"() => {
                         const selectors = Array.from(document.querySelectorAll('div.tile-container > div.tile')); 
                         return selectors.map( t=> {return { Index: t.getAttribute('data-index'), Value: t.getAttribute('data-val') }});
@@ -34,7 +38,7 @@ namespace DBHackathonPuppeteer
                 gridTiles[result.Index] = result.Value;
             }
 
-            //var cleanUrlList = test.Result.ToArray();
+            return gridTiles;
         }
 
     }
