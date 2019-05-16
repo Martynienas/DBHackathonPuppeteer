@@ -1,4 +1,5 @@
 ﻿using PuppeteerSharp;
+using PuppeteerSharp.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +61,24 @@ namespace DBHackathonPuppeteer
                     {
                         await page.Keyboard.PressAsync("ArrowLeft");
                     }
+                }
+            }
+        }
+
+        public async Task FailGame(Page page)
+        {
+
+            for (int i = 1; i < 10000; i++)
+            {
+                int[] beforeGrid = await GetGridElements(page);
+                await page.Keyboard.PressAsync(Key.ArrowDown);
+                await page.Keyboard.PressAsync(Key.ArrowLeft);
+                await page.Keyboard.PressAsync(Key.ArrowUp);
+                await page.Keyboard.PressAsync(Key.ArrowRight);
+                int[] afterGrid = await GetGridElements(page);
+                if (beforeGrid.SequenceEqual(afterGrid))
+                {
+                    break;
                 }
             }
         }

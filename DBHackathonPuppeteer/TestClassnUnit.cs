@@ -116,6 +116,13 @@ namespace DBHackathonPuppeteer
         }
 
         [Test]
+        public async Task Loose()
+        {
+            await solver.FailGame(page);
+            await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
+            Assert.Pass();
+        }
+        [Test]
         public async Task VerifyInitialTilesDisplayed()
         {
             int initialTilesCount = 2;
