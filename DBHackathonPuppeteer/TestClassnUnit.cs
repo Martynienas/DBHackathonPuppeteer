@@ -15,6 +15,7 @@ namespace DBHackathonPuppeteer
         private const string testPageUrl = "http://4ark.me/2048/";
         private const int waitForSelectorTimeOut = 5000;
         private WaitForSelectorOptions defaultWaitForSelectorOptions = new WaitForSelectorOptions();
+        private ScreenshotHelper screenshotHelper;
 
         public class Score
         {
@@ -28,7 +29,9 @@ namespace DBHackathonPuppeteer
             InitializePage().Wait();
             defaultWaitForSelectorOptions.Timeout = waitForSelectorTimeOut;
             solver = new GameSolverHelper();
+            screenshotHelper = new ScreenshotHelper(page);
             page.GoToAsync(testPageUrl).Wait();
+            screenshotHelper.TakeScreenshot().Wait();
         }
 
         [SetUp]
@@ -41,6 +44,7 @@ namespace DBHackathonPuppeteer
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            screenshotHelper.TakeScreenshot().Wait();
             page.Dispose();
         }
 
