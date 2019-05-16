@@ -134,19 +134,22 @@ namespace DBHackathonPuppeteer
             await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
             Assert.Pass();
         }
-        [Test]
+
+        [Test, Retry(50)]
         public async Task Win()
         {
-            await solver.Jiggle(page);
+            await solver.Jigglev2(page);
+            bool won = false;
             try
             {
                 await page.WaitForSelectorAsync(".failure-container.pop-container.action", defaultWaitForSelectorOptions);
-                Assert.Fail();
+                won = false;
             }
             catch
             {
-                Assert.Pass();
+                won = true;
             }
+            Assert.True(won);
         }
 
         [Test]
