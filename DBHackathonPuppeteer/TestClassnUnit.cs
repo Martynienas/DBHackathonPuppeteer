@@ -73,8 +73,6 @@ namespace DBHackathonPuppeteer
 
             Assert.AreEqual(initialSum + 2, newSum);
             Assert.GreaterOrEqual(newGrid.TakeLast(4).Sum(), initialSum);
-
-            await page.Keyboard.PressAsync(Key.ArrowDown);
         }
 
         [Test]
