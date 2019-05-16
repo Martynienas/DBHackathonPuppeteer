@@ -63,6 +63,50 @@ namespace DBHackathonPuppeteer
 
             Assert.AreEqual(initialSum + 2, newSum);
             Assert.GreaterOrEqual(newGrid.TakeLast(4).Sum(), initialSum);
+
+            await page.Keyboard.PressAsync(Key.ArrowDown);
+        }
+
+        [Test]
+        public async Task ArrowUp()
+        {
+            var gameSolver = new GameSolverHelper();
+            int[] initialGrid = await gameSolver.GetGridElements(page);
+            int initialSum = initialGrid.Sum();
+            await page.Keyboard.PressAsync(Key.ArrowUp);
+            int[] newGrid = await gameSolver.GetGridElements(page);
+            int newSum = newGrid.Sum();
+
+            Assert.AreEqual(initialSum + 2, newSum);
+            Assert.GreaterOrEqual(newGrid.Take(4).Sum(), initialSum);
+        }
+
+        [Test]
+        public async Task ArrowLeft()
+        {
+            var gameSolver = new GameSolverHelper();
+            int[] initialGrid = await gameSolver.GetGridElements(page);
+            int initialSum = initialGrid.Sum();
+            await page.Keyboard.PressAsync(Key.ArrowLeft);
+            int[] newGrid = await gameSolver.GetGridElements(page);
+            int newSum = newGrid.Sum();
+
+            Assert.AreEqual(initialSum + 2, newSum);
+            //TODO asser left line
+        }
+
+        [Test]
+        public async Task ArrowRight()
+        {
+            var gameSolver = new GameSolverHelper();
+            int[] initialGrid = await gameSolver.GetGridElements(page);
+            int initialSum = initialGrid.Sum();
+            await page.Keyboard.PressAsync(Key.ArrowRight);
+            int[] newGrid = await gameSolver.GetGridElements(page);
+            int newSum = newGrid.Sum();
+
+            Assert.AreEqual(initialSum + 2, newSum);
+            //TODO asser right line
         }
 
 
