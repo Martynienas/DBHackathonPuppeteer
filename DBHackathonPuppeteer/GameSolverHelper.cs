@@ -193,7 +193,7 @@ namespace DBHackathonPuppeteer
                         await page.Keyboard.PressAsync("ArrowUp");
                         continue;
                     }
-                    await page.Keyboard.PressAsync("ArrowRight");
+                    //await page.Keyboard.PressAsync("ArrowRight");
                     await page.Keyboard.PressAsync("ArrowUp");
                 }
 
