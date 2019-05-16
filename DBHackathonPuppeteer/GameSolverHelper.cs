@@ -1,6 +1,7 @@
 ﻿using PuppeteerSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +40,28 @@ namespace DBHackathonPuppeteer
             }
 
             return gridTiles;
+
+        }
+
+        public async Task Jiggle(Page page)
+        {
+            
+            for (int i = 1; i < 10000; i++)
+            {
+                int[] tempGrid = await GetGridElements(page);
+                await page.Keyboard.PressAsync("ArrowUp");
+                await page.Keyboard.PressAsync("ArrowRight");
+                int[] tempGrid2 = await GetGridElements(page);
+                bool isEqual = Enumerable.SequenceEqual(tempGrid, tempGrid2);
+                if (isEqual)
+                {
+                    await page.Keyboard.PressAsync("ArrowDown");
+                                        if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                    {
+                        await page.Keyboard.PressAsync("ArrowLeft");
+                    }
+                }
+            }
         }
 
     }
