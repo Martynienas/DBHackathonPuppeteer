@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using PuppeteerSharp;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DBHackathonPuppeteer
@@ -9,12 +11,15 @@ namespace DBHackathonPuppeteer
     {
         private Browser browser;
         private Page page;
+        private GameSolverHelper solver = new GameSolverHelper();
         private const string testPageUrl = "http://4ark.me/2048/";
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             InitializePage().Wait();
+
+            solver = new GameSolverHelper();
         }
 
         [SetUp]
@@ -52,10 +57,31 @@ namespace DBHackathonPuppeteer
         [Test]
         public async Task VerifyUiActions()
         {
-            string newGameButtonSelector = ".restart-btn";
+            int refreshCount = 3;
+            int matchCount = 0;
 
+            List<int[]> gridElementList = new List<int[]>();
+            int[] initialGridElements = await solver.GetGridElements(page);
+            for (int i = 0; i < refreshCount; i++)
+            {
+                int[] gridElements = await ClickNewGameAndGetGrid();
+                gridElementList.Add(gridElements);
+                if(gridElements == initialGridElements)
+                {
+                    matchCount++;
+                }
+            }
+
+            Assert.AreNotEqual(refreshCount, matchCount, "Grid was not reloaded");
+        }
+
+        private async Task<int[]> ClickNewGameAndGetGrid()
+        {
+            string newGameButtonSelector = ".restart-btn";            
             ElementHandle buttonElement = await page.WaitForSelectorAsync(newGameButtonSelector);
             await buttonElement.ClickAsync();
+            int[] gridElements = await solver.GetGridElements(page);
+            return gridElements;
         }
 
         private async Task InitializePage()
