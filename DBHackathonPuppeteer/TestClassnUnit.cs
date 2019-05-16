@@ -14,12 +14,14 @@ namespace DBHackathonPuppeteer
         private Page page;
         private GameSolverHelper solver = new GameSolverHelper();
         private const string testPageUrl = "http://4ark.me/2048/";
+        private const int waitForSelectorTimeOut = 5000;
+        private WaitForSelectorOptions defaultWaitForSelectorOptions = new WaitForSelectorOptions();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             InitializePage().Wait();
-
+            defaultWaitForSelectorOptions.Timeout = waitForSelectorTimeOut;
             solver = new GameSolverHelper();
         }
 
@@ -62,18 +64,45 @@ namespace DBHackathonPuppeteer
             Assert.AreEqual(initialSum + 2, newSum);
             Assert.GreaterOrEqual(newGrid.TakeLast(4).Sum(), initialSum);
         }
-        
+
 
         [Test]
-        public async Task VerifyLayout()
+        public async Task VerifyGameContainerDisplayed()
         {
+            string gameContainerSelector = "div.game-container";
+            Assert.DoesNotThrowAsync(() => page.WaitForSelectorAsync(gameContainerSelector, defaultWaitForSelectorOptions), "Game container does not exist");
+        }
+
+        [Test]
+        public async Task VerifyInitialTilesDisplayed()
+        {
+            int initialTilesCount = 2;
+            int expectedTileSum = 4;
+            int actualTileSum = 0;
+
+            var jsCode = @"() => {
+                        const selectors = Array.from(document.querySelectorAll('div.tile-container > div.tile')); 
+                        return selectors.map( t=> {return { Index: t.getAttribute('data-index'), Value: t.getAttribute('data-val') }});
+                        }";
+            var results = await page.EvaluateFunctionAsync<GameSolverHelper.Tile[]>(jsCode);
+
+            foreach (var result in results)
+            {
+                actualTileSum += result.Value;
+            }
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(initialTilesCount, results.Length, "Tile count mismatch");
+                Assert.AreEqual(expectedTileSum, actualTileSum, "Expected tile value sum mismatch");
+            });
 
         }
 
         [Test]
-        public async Task VerifyUiActions()
+        public async Task VerifyNewGameAction()
         {
-            int refreshCount = 3;
+            int refreshCount = 10;
             int matchCount = 0;
 
             List<int[]> gridElementList = new List<int[]>();
@@ -82,22 +111,13 @@ namespace DBHackathonPuppeteer
             {
                 int[] gridElements = await ClickNewGameAndGetGrid();
                 gridElementList.Add(gridElements);
-                if(gridElements == initialGridElements)
+                if (gridElements == initialGridElements)
                 {
                     matchCount++;
                 }
             }
 
             Assert.AreNotEqual(refreshCount, matchCount, "Grid was not reloaded");
-        }
-
-        private async Task<int[]> ClickNewGameAndGetGrid()
-        {
-            string newGameButtonSelector = ".restart-btn";            
-            ElementHandle buttonElement = await page.WaitForSelectorAsync(newGameButtonSelector);
-            await buttonElement.ClickAsync();
-            int[] gridElements = await solver.GetGridElements(page);
-            return gridElements;
         }
 
         private async Task InitializePage()
@@ -138,6 +158,15 @@ namespace DBHackathonPuppeteer
             JSHandle jsHandle = await element.GetPropertyAsync(property);
             string value = await jsHandle.JsonValueAsync<string>();
             return value;
+        }
+
+        private async Task<int[]> ClickNewGameAndGetGrid()
+        {
+            string newGameButtonSelector = ".restart-btn";
+            ElementHandle buttonElement = await page.WaitForSelectorAsync(newGameButtonSelector);
+            await buttonElement.ClickAsync();
+            int[] gridElements = await solver.GetGridElements(page);
+            return gridElements;
         }
     }
 }
