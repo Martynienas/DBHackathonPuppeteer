@@ -56,7 +56,7 @@ namespace DBHackathonPuppeteer
             await page.SetViewportAsync(viewPortOptions);
             await page.GoToAsync(testPageUrl);
             GameSolverHelper solver = new GameSolverHelper();
-            await solver.Jiggle(page);
+            await solver.Jigglev2(page);
         }
     }
 }

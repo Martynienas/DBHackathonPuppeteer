@@ -110,7 +110,81 @@ namespace DBHackathonPuppeteer
                         await page.Keyboard.PressAsync("ArrowLeft");
                         if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
                         {
-                            failedActions++;                            
+                            failedActions++;
+                        }
+                    }
+                }
+            }
+        }
+
+        public async Task Jigglev2(Page page)
+        {
+            int failedActions = 0;
+            for (int i = 1; i < 10000; i++)
+            {
+                int[] tempGrid = await GetGridElements(page);
+                if (tempGrid[3] == 0)
+                {
+                    await page.Keyboard.PressAsync("ArrowUp");
+                    await page.Keyboard.PressAsync("ArrowRight");
+                }
+                if (tempGrid[2] == tempGrid[3])
+                {
+                    await page.Keyboard.PressAsync("ArrowRight");
+                    //continue;
+                }
+                if (tempGrid[7] == tempGrid[3])
+                {
+                    await page.Keyboard.PressAsync("ArrowUp");
+                    continue;
+                }
+
+                if ((tempGrid[2] != tempGrid[3]) && (tempGrid[7] != tempGrid[3]))
+                {
+                    if (tempGrid[1] == tempGrid[2])
+                    {
+                        await page.Keyboard.PressAsync("ArrowRight");
+                        //continue;
+                    }
+                    if (tempGrid[6] == tempGrid[2])
+                    {
+                        await page.Keyboard.PressAsync("ArrowUp");
+                        //continue;
+                    }
+                    if (tempGrid[6] == tempGrid[7])
+                    {
+                        await page.Keyboard.PressAsync("ArrowRight");
+                        //continue;
+                    }
+                    if (tempGrid[11] == tempGrid[7])
+                    {
+                        await page.Keyboard.PressAsync("ArrowUp");
+                        continue;
+                    }
+                }
+
+                {
+                    await page.Keyboard.PressAsync("ArrowRight");
+                    await page.Keyboard.PressAsync("ArrowUp");
+                }
+                int[] tempGrid2 = await GetGridElements(page);
+                bool isEqual = Enumerable.SequenceEqual(tempGrid, tempGrid2);
+                if (isEqual)
+                {
+                    {
+                        if (failedActions >= 3)
+                        {
+                            break;
+                        }
+
+                        await page.Keyboard.PressAsync("ArrowDown");
+                        if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                        {
+                            await page.Keyboard.PressAsync("ArrowLeft");
+                            if (Enumerable.SequenceEqual(tempGrid, await GetGridElements(page)))
+                            {
+                                failedActions++;
+                            }
                         }
                     }
                 }
